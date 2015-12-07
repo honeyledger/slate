@@ -4,18 +4,13 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>API Reference</title>
+    <title>HoneyLedger API Reference</title>
 
     <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
       <script src="javascripts/all.js" type="text/javascript"></script>
 
-      <script>
-        $(function() {
-          setupLanguages(["shell","ruby","python"]);
-        });
-      </script>
   </head>
 
   <body class="index">
@@ -27,11 +22,6 @@
     </a>
     <div class="tocify-wrapper">
       <img src="images/logo.png" />
-        <div class="lang-selector">
-              <a href="#" data-language-name="shell">shell</a>
-              <a href="#" data-language-name="ruby">ruby</a>
-              <a href="#" data-language-name="python">python</a>
-        </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
         </div>
@@ -39,156 +29,344 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='#'>Sign Up for a Developer Key</a></li>
-            <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+            <li><a href='http://stage.honeyledger.com/'>HoneyLedger Staging Site</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id='introduction'>Introduction</h1>
-<p>Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.</p>
+        <h1 id="introduction">Introduction</h1>
 
-<p>We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+<aside class="notice">
+The HoneyLedger API is still under active development and may change often. We highly recommend signing up to the <a href='http://eepurl.com/bIMS_f'>HoneyLedger API Developers Email List</a> and receive emails when we make changes to the API.
+<br><br>This document will always have the most up-to-date documentation on our API.
+</aside>
 
-<p>This example API documentation page was created with <a href="http://github.com/tripit/slate">Slate</a>. Feel free to edit it and use it as a base for your own API&rsquo;s documentation.</p>
-<h1 id='authentication'>Authentication</h1>
-<blockquote>
-<p>To authorize, use this code:</p>
-</blockquote>
-<pre><code class="highlight ruby"><span class="nb">require</span> <span class="s1">'kittn'</span>
+<p>The HoneyLedger API is intended for third-party developers to build their own notification and payment systems on top of HoneyLedger.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight python"><span class="kn">import</span> <span class="nn">kittn</span>
+<p>The typical use case is for a third-party application to create and track a payment on behalf of one of their users.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight shell"><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
+<h1 id="api-keys">API Keys</h1>
 
-<blockquote>
-<p>Make sure to replace <code class="prettyprint">meowmeowmeow</code> with your API key.</p>
-</blockquote>
+<p>The HoneyLedger API is currently open to interested developers, but there isn&rsquo;t a formal signup process yet. If you do not currently have a HoneyLedger <code class="prettyprint">app_id</code> and <code class="prettyprint">app_secret</code>, email us at developers@honeyledger.com and we can get you started.</p>
 
-<p>Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our <a href="http://example.com/developers">developer portal</a>.</p>
+<h1 id="application-flow">Application Flow</h1>
 
-<p>Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
+<p>Using the HoneyLedger API to build and track payments is a simple process:</p>
 
-<p><code class="prettyprint">Authorization: meowmeowmeow</code></p>
+<ol>
+<li>Create a HoneyLedger Transaction ID (<code class="prettyprint">honeyledger_txid</code>) using the <code class="prettyprint">/create</code> API call.</li>
+<li>Redirect your user to the appropriate HoneyLedger Payment Page with their <code class="prettyprint">honeyledger_txid</code> for checkout.</li>
+<li>Receive a webhook notification when the payment has been posted and verify it with a <code class="prettyprint">/status</code> API call.</li>
+</ol>
 
-<p><aside class="notice">
-You must replace <code class="prettyprint">meowmeowmeow</code> with your personal API key.
-</aside></p>
-<h1 id='kittens'>Kittens</h1><h2 id='get-all-kittens'>Get All Kittens</h2><pre><code class="highlight ruby"><span class="nb">require</span> <span class="s1">'kittn'</span>
+<p>All of the HoneyLedger API data is associated with a <code class="prettyprint">honeyledger_txid</code>, which is a unique transaction ID associated with your <code class="prettyprint">app_id</code>.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
-</code></pre>
-<pre><code class="highlight python"><span class="kn">import</span> <span class="nn">kittn</span>
+<p>For most users, you will most likely be creating a payment form on your website or app, gathering the required information on that page, then creating (and storing) the <code class="prettyprint">honeyledger_txid</code> request on your side before redirecting the user to checkout with HoneyLedger.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</code></pre>
-<pre><code class="highlight shell">curl <span class="s2">"http://example.com/api/kittens"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
+<h1 id="data-formats">Data Formats</h1>
 
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre><code class="highlight json"><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Isis"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre>
+<p>The HoneyLedger API will always return data in JSON format.</p>
 
-<p>This endpoint retrieves all kittens.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET http://example.com/kittens</code></p>
-<h3 id='query-parameters'>Query Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
-</tr>
-<tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
-</tr>
-</tbody></table>
+<p>Data should be passed to the HoneyLedger API in JSON format, using an HTTP POST request with <code class="prettyprint">Content-Type: application/json</code> in the request header.</p>
 
-<p><aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside></p>
-<h2 id='get-a-specific-kitten'>Get a Specific Kitten</h2><pre><code class="highlight ruby"><span class="nb">require</span> <span class="s1">'kittn'</span>
+<h1 id="staging-amp-production-apis">Staging &amp; Production APIs</h1>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight python"><span class="kn">import</span> <span class="nn">kittn</span>
+<p>When developing your application, use the staging environment. Staging is code-identical to production, except that no real money is transferred, and &ldquo;payments&rdquo; are processed near-instantly.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight shell">curl <span class="s2">"http://example.com/api/kittens/3"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
+<p><strong>STAGING URLs</strong>:</p>
+
+<ul>
+<li>API: <code class="prettyprint">https://api-stage.honeyledger.com/v1/{api_call}</code></li>
+<li>Payment Pages: <code class="prettyprint">https://pay-stage.honeyledger.com/{honeyledger_txid}</code></li>
+<li>Website: <code class="prettyprint">https://stage.honeyledger.com</code></li>
+</ul>
+
+<p><strong>PRODUCTION</strong>:</p>
+
+<ul>
+<li>API: <code class="prettyprint">https://api.honeyledger.com/v1/{api_call}</code></li>
+<li>Checkout Pages: <code class="prettyprint">https://pay.honeyledger.com/{honeyledger_txid}</code></li>
+<li>Website: <code class="prettyprint">https://honeyledger.com</code></li>
+</ul>
+
+<h1 id="api-calls">API Calls</h1>
+
+<h2 id="create">/create</h2>
 
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>Example JSON request:</p>
 </blockquote>
-<pre><code class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Isis"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"app_id"</span><span class="p">:</span><span class="s2">"your_app_id"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"app_secret"</span><span class="p">:</span><span class="s2">"your_app_secret"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"user_token"</span><span class="p">:</span><span class="s2">"FDB6D6750D5F1832A6452D86A4094F5D19B72F1A"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"from_name"</span><span class="p">:</span><span class="s2">"Kappa"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"app_fee"</span><span class="p">:</span><span class="mf">1.00</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"amount"</span><span class="p">:</span><span class="mf">5.00</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This endpoint retrieves a specific kitten.</p>
+<blockquote>
+<p>Example request using curl:</p>
+</blockquote>
+<pre class="highlight shell"><code>
+curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+     -X POST <span class="se">\</span>
+     -d <span class="s1">'{"app_id":"your_app_id","app_secret":"your_app_secret","user_token":"FDB6D6750D5F1832A6452D86A4094F5D19B72F1A","from_name":"Kappa","app_fee":1.00,"amount":5.00}'</span> <span class="se">\</span>
+     http://api-stage.honeyledger.com/v1/create
+</code></pre>
 
-<p><aside class="warning">If you&rsquo;re not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside></p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET http://example.com/kittens/&lt;ID&gt;</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<blockquote>
+<p>The above call will return JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"honeyledger_txid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C554001FDF0604EE"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"expire_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1449446664"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>The create API call generates a HoneyLedger Transaction ID for a 3rd party application. Transaction IDs are valid for 1 hour from generation, at which point they will be automatically set to expired.</p>
+
+<h3 id="api-call">API Call</h3>
+
+<p><code class="prettyprint">/v1/create</code></p>
+
+<h3 id="api-arguments">API Arguments</h3>
+
 <table><thead>
 <tr>
 <th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Type</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>ID</td>
-<td>The ID of the cat to retrieve</td>
+<td>app_id</td>
+<td><strong>Yes</strong></td>
+<td></td>
+<td>int(10)</td>
+<td>Your Application ID</td>
+</tr>
+<tr>
+<td>app_secret</td>
+<td><strong>Yes</strong></td>
+<td></td>
+<td>string(255)</td>
+<td>Your Application Secret</td>
+</tr>
+<tr>
+<td>user_token</td>
+<td><strong>Yes</strong></td>
+<td></td>
+<td>string(40)</td>
+<td>A token to represent the user that will be receiving a payment. This token is given to a user when they finish signing up to accept payments at HoneyLedger.</td>
+</tr>
+<tr>
+<td>from_name</td>
+<td>No</td>
+<td>Twitch username</td>
+<td>string(255)</td>
+<td>The name (or pseudonym) of the user who is trying to donate. Overrides their “actual” Twitch username for anonymous/pseudonymous donations</td>
+</tr>
+<tr>
+<td>amount</td>
+<td><strong>Yes</strong></td>
+<td></td>
+<td>decimal(14,2)</td>
+<td>The amount a user is attempting to donate</td>
+</tr>
+<tr>
+<td>app_fee</td>
+<td>No</td>
+<td>0.00</td>
+<td>decimal(4,2)</td>
+<td>The percentage (1.00 = 1%) of the total amount to be collected by your application. NOTE: Your app_fee cannot be higher than 15%.</td>
+</tr>
+<tr>
+<td>webhook_url</td>
+<td>No</td>
+<td>null</td>
+<td>string(255)</td>
+<td>The URL that will receive any webhook notifications when the payment is processed.</td>
+</tr>
+<tr>
+<td>success_url</td>
+<td>No</td>
+<td>null</td>
+<td>string(255)</td>
+<td>URL to redirect to upon successful payment</td>
+</tr>
+<tr>
+<td>cancel_url</td>
+<td>No</td>
+<td>null</td>
+<td>string(255)</td>
+<td>URL to redirect to upon canceling the payment</td>
 </tr>
 </tbody></table>
 
-          <h1 id='errors'>Errors</h1>
-<p><aside class="notice">This error section is stored in a separate file in <code class="prettyprint">includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the <code class="prettyprint">includes</code> folder and add them to the top of your <code class="prettyprint">index.md</code>&rsquo;s frontmatter. Files are included in the order listed.</aside></p>
+<h3 id="api-response">API Response</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>honeyledger_txid</td>
+<td>string(255)</td>
+<td>HoneyLedger Transaction ID for this payment</td>
+</tr>
+<tr>
+<td>expire_time</td>
+<td>timestamp</td>
+<td>Timestamp of when this transaction id expires (UTC). This is always 1 hour after the transaction request was created.</td>
+</tr>
+</tbody></table>
+
+<h2 id="status">/status</h2>
+
+<blockquote>
+<p>Example JSON request:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"app_id"</span><span class="p">:</span><span class="s2">"your_app_id"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"app_secret"</span><span class="p">:</span><span class="s2">"your_app_secret"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"honeyledger_txid"</span><span class="p">:</span><span class="s2">"C554001FDF0604EE"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<blockquote>
+<p>Example request using curl:</p>
+</blockquote>
+<pre class="highlight shell"><code>
+curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+     -X POST <span class="se">\</span>
+     -d <span class="s1">'{"app_id":"your_app_id","app_secret":"your_app_secret","honeyledger_txid":"C554001FDF0604EE"}'</span> <span class="se">\</span>
+     http://api-stage.honeyledger.com/v1/create
+</code></pre>
+
+<blockquote>
+<p>The above call returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"honeyledger_txid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C554001FDF0604EE"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"from_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kappa"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"user_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FDB6D6750D5F1832A6452D86A4094F5D19B72F1A"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5.00"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"app_fee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"expire_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1449446664"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>The status API call will look up the current state of a HoneyLedger Transaction ID (<code class="prettyprint">honeyledger_txid</code>) associated with your <code class="prettyprint">app_id</code> and <code class="prettyprint">app_secret</code>.</p>
+
+<p>If using webhooks to track payment status, always use this call after receiving a notification from HoneyLedger.</p>
+
+<h3 id="api-call">API Call</h3>
+
+<p><code class="prettyprint">/v1/status</code></p>
+
+<h3 id="api-arguments">API Arguments</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>app_id</td>
+<td><strong>Yes</strong></td>
+<td></td>
+<td>int(10)</td>
+<td>Your Application ID</td>
+</tr>
+<tr>
+<td>app_secret</td>
+<td><strong>Yes</strong></td>
+<td></td>
+<td>string(255)</td>
+<td>Your Application Secret</td>
+</tr>
+<tr>
+<td>honeyledger_txid</td>
+<td><strong>Yes</strong></td>
+<td>string(255)</td>
+<td>HoneyLedger transaction ID you want to look up the status of.</td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3 id="api-response">API Response</h3>
+
+<table><thead>
+<tr>
+<th>Response Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>honeyledger_txid</td>
+<td>string(255)</td>
+<td>HoneyLedger transaction ID for this payment</td>
+</tr>
+<tr>
+<td>from_name</td>
+<td>string(255)</td>
+<td>The name (or pseudonym) of the user who is trying to donate.</td>
+</tr>
+<tr>
+<td>user_token</td>
+<td>string(40)</td>
+<td>A token to represent the user that will be receiving a payment.</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>decimal(14,2)</td>
+<td>The amount of this donation</td>
+</tr>
+<tr>
+<td>state</td>
+<td>string(255)</td>
+<td>The state the transaction is in. For simplicity, may be one of <code class="prettyprint">new</code> <code class="prettyprint">expired</code> <code class="prettyprint">pending</code> <code class="prettyprint">failed</code> <code class="prettyprint">completed</code></td>
+</tr>
+<tr>
+<td>expire_time</td>
+<td>timestamp</td>
+<td>Timestamp of when this transaction id expires (UTC). This is always 1 hour after the transaction request was created.</td>
+</tr>
+</tbody></table>
+
+<h1 id="webhooks">Webhooks</h1>
+
+<blockquote>
+<p>An example Webhook callback:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"honeyledger_txid"</span><span class="p">:</span><span class="s2">"C554001FDF0604EE"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>When building an application for production use, webhooks are the quickest way to track the status of a payment.</p>
+
+<p>Setting the <code class="prettyprint">webhook_url</code> during the <code class="prettyprint">/create</code> API call will trigger a callback to that URL when the status of the <code class="prettyprint">honeyledger_txid</code> changes.</p>
+
+<p>By default, webhook callbacks are only sent over when the status of a <code class="prettyprint">honeyledger_txid</code> has changed to <code class="prettyprint">completed</code> &ndash; meaning the transaction has been successfully paid. However, we can turn on more notifications if you need them.</p>
+
+          <h1 id="errors">Errors</h1>
+
+<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the `includes` folder and add them to the top of your `index.md`&rsquo;s frontmatter. Files are included in the order listed.</aside>
 
 <p>The Kittn API uses the following error codes:</p>
 
@@ -232,7 +410,7 @@ Remember — a happy kitten is an authenticated kitten!
 </tr>
 <tr>
 <td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slown down!</td>
+<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slow down!</td>
 </tr>
 <tr>
 <td>500</td>
@@ -246,11 +424,6 @@ Remember — a happy kitten is an authenticated kitten!
 
       </div>
       <div class="dark-box">
-          <div class="lang-selector">
-                <a href="#" data-language-name="shell">shell</a>
-                <a href="#" data-language-name="ruby">ruby</a>
-                <a href="#" data-language-name="python">python</a>
-          </div>
       </div>
     </div>
   </body>
