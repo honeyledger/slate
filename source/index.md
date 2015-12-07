@@ -3,7 +3,8 @@ title: HoneyLedger API Reference
 
 toc_footers:
   - <a href='http://stage.honeyledger.com/'>HoneyLedger Staging Site</a>
-
+  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  
 includes:
   - errors
 
