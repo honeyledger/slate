@@ -29,7 +29,7 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='http://stage.honeyledger.com/'>HoneyLedger Staging Site</a></li>
+            <li><a href='http://honeyledger-staging.com/'>HoneyLedger Staging Site</a></li>
             <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
         </ul>
     </div>
@@ -78,9 +78,9 @@ The HoneyLedger API is still under active development and may change often. We h
 <p><strong>STAGING URLs</strong>:</p>
 
 <ul>
-<li>API: <code class="prettyprint">https://api-stage.honeyledger.com/v1/{api_call}</code></li>
-<li>Payment Pages: <code class="prettyprint">https://pay-stage.honeyledger.com/{honeyledger_txid}</code></li>
-<li>Website: <code class="prettyprint">https://stage.honeyledger.com</code></li>
+<li>API: <code class="prettyprint">https://api.honeyledger-staging.com/v1/{api_call}</code></li>
+<li>Payment Pages: <code class="prettyprint">https://pay.honeyledger-staging.com/{honeyledger_txid}</code></li>
+<li>Website: <code class="prettyprint">https://honeyledger-staging.com</code></li>
 </ul>
 
 <p><strong>PRODUCTION</strong>:</p>
@@ -115,7 +115,7 @@ The HoneyLedger API is still under active development and may change often. We h
 curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
      -X POST <span class="se">\</span>
      -d <span class="s1">'{"app_id":"your_app_id","app_secret":"your_app_secret","user_token":"FDB6D6750D5F1832A6452D86A4094F5D19B72F1A","from_name":"Kappa","app_fee":1.00,"amount":5.00}'</span> <span class="se">\</span>
-     http://api-stage.honeyledger.com/v1/create
+     http://api.honeyledger-staging.com/v1/create
 </code></pre>
 
 <blockquote>
@@ -249,7 +249,7 @@ curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se
 curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
      -X POST <span class="se">\</span>
      -d <span class="s1">'{"app_id":"your_app_id","app_secret":"your_app_secret","honeyledger_txid":"C554001FDF0604EE"}'</span> <span class="se">\</span>
-     http://api-stage.honeyledger.com/v1/create
+     http://api.honeyledger-staging.com/v1/create
 </code></pre>
 
 <blockquote>
