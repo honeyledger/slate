@@ -366,9 +366,22 @@ curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se
 
           <h1 id="errors">Errors</h1>
 
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the `includes` folder and add them to the top of your `index.md`&rsquo;s frontmatter. Files are included in the order listed.</aside>
+<blockquote>
+<p>Example Error Response:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"error"</span><span class="p">:</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"error_code"</span><span class="p">:</span><span class="s2">"1001"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"error_desc"</span><span class="p">:</span><span class="s2">"Missing app_secret or app_id"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
 
-<p>The Kittn API uses the following error codes:</p>
+</span></code></pre>
+
+<p>In the event of an error, HoneyLedger will return an <code class="prettyprint">error</code> response with an <code class="prettyprint">error_code</code> and <code class="prettyprint">error_desc</code> to describe what went wrong.</p>
+
+<p>The HoneyLedger API uses the following error codes:</p>
 
 <table><thead>
 <tr>
@@ -377,48 +390,16 @@ curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se
 </tr>
 </thead><tbody>
 <tr>
-<td>400</td>
-<td>Bad Request &ndash; Your request sucks</td>
+<td>1001</td>
+<td>Missing Parameter</td>
 </tr>
 <tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
+<td>1002</td>
+<td>Incorrect Parameter</td>
 </tr>
 <tr>
-<td>403</td>
-<td>Forbidden &ndash; The kitten requested is hidden for administrators only</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found &ndash; The specified kitten could not be found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a kitten with an invalid method</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone &ndash; The kitten requested has been removed from our servers</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&rsquo;m a teapot</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
+<td>1003</td>
+<td>Data does not exist</td>
 </tr>
 </tbody></table>
 
