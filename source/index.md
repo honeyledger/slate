@@ -2,7 +2,7 @@
 title: HoneyLedger API Reference
 
 toc_footers:
-  - <a href='http://stage.honeyledger.com/'>HoneyLedger Staging Site</a>
+  - <a href='http://honeyledger-staging.com/'>HoneyLedger Staging Site</a>
   - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
   
 includes:
@@ -50,9 +50,9 @@ When developing your application, use the staging environment. Staging is code-i
 
 **STAGING URLs**:
 
-* API: `https://api-stage.honeyledger.com/v1/{api_call}`
-* Payment Pages: `https://pay-stage.honeyledger.com/{honeyledger_txid}`
-* Website: `https://stage.honeyledger.com`
+* API: `https://api.honeyledger-staging.com/v1/{api_call}`
+* Payment Pages: `https://pay.honeyledger-staging.com/{honeyledger_txid}`
+* Website: `https://honeyledger-staging.com`
 
 **PRODUCTION**:
 
@@ -84,7 +84,7 @@ When developing your application, use the staging environment. Staging is code-i
 curl -H "Content-Type: application/json" \
      -X POST \
      -d '{"app_id":"your_app_id","app_secret":"your_app_secret","user_token":"FDB6D6750D5F1832A6452D86A4094F5D19B72F1A","from_name":"Kappa","app_fee":1.00,"amount":5.00}' \
-     http://api-stage.honeyledger.com/v1/create
+     http://api.honeyledger-staging.com/v1/create
 ```
 
 > The above call will return JSON structured like this:
@@ -143,7 +143,7 @@ expire_time | timestamp | Timestamp of when this transaction id expires (UTC). T
 curl -H "Content-Type: application/json" \
      -X POST \
      -d '{"app_id":"your_app_id","app_secret":"your_app_secret","honeyledger_txid":"C554001FDF0604EE"}' \
-     http://api-stage.honeyledger.com/v1/create
+     http://api.honeyledger-staging.com/v1/create
 ```
 
 > The above call returns JSON structured like this:
