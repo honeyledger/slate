@@ -51,13 +51,13 @@ When developing your application, use the staging environment. Staging is code-i
 **STAGING URLs**:
 
 * API: `https://api.honeyledger-staging.com/v1/{api_call}`
-* Payment Pages: `https://pay.honeyledger-staging.com/{honeyledger_txid}`
+* Payment Pages: `https://honeyledger-staging.com/pay/{honeyledger_txid}`
 * Website: `https://honeyledger-staging.com`
 
 **PRODUCTION**:
 
 * API: `https://api.honeyledger.com/v1/{api_call}`
-* Checkout Pages: `https://pay.honeyledger.com/{honeyledger_txid}`
+* Checkout Pages: `https://honeyledger.com/pay/{honeyledger_txid}`
 * Website: `https://honeyledger.com`
 
 # API Calls
